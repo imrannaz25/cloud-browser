@@ -26,11 +26,16 @@
       const url = document.getElementById('urlInput').value;
       const proxyUrl = `https://6e239f40-794d-4995-8eb4-a601bd429c35-00-38s32i6l1k7i8.kirk.replit.dev/proxy?url=${encodeURIComponent(url)}`;
 
-      const response = await fetch(proxyUrl);
-      const html = await response.text();
+      try {
+        const response = await fetch(proxyUrl);
+        const html = await response.text();
 
-      const iframe = document.getElementById('browserFrame');
-      iframe.srcdoc = html;
+        const iframe = document.getElementById('browserFrame');
+        iframe.srcdoc = html;
+      } catch (err) {
+        alert("Error fetching URL");
+        console.error(err);
+      }
     }
   </script>
 </body>
