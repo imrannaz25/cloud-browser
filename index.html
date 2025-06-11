@@ -1,40 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cloud Browser</title>
+  <title>Fast Cloud Browser</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 1rem;
+      background: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    input, button {
+      padding: 0.5rem;
+      font-size: 1rem;
     }
     iframe {
+      margin-top: 1rem;
       width: 100%;
       height: 90vh;
       border: 1px solid #ccc;
+      background: white;
     }
   </style>
 </head>
 <body>
-  <h1>Cloud Browser</h1>
+  <h1>☁️ Cloud Browser</h1>
   <input type="text" id="urlInput" placeholder="https://example.com" style="width: 60%;" />
   <button onclick="loadPage()">Go</button>
-  <iframe id="browserFrame"></iframe>
+  <iframe id="browserFrame" data-last-url=""></iframe>
 
   <script>
     async function loadPage() {
-      const url = document.getElementById('urlInput').value;
-      const proxyUrl = `https://6e239f40-794d-4995-8eb4-a601bd429c35-00-38s32i6l1k7i8.kirk.replit.dev/proxy?url=${encodeURIComponent(url)}`;
+      const url = document.getElementById('urlInput').value.trim();
+      const proxyBase = 'https://6e239f40-794d-4995-8eb4-a601bd429c35-00-38s32i6l1k7i8.kirk.replit.dev/proxy?url=';
+      const proxyUrl = `${proxyBase}${encodeURIComponent(url)}`;
+      const iframe = document.getElementById('browserFrame');
+
+      if (!url) {
+        alert("Please enter a URL.");
+        return;
+      }
+
+      if (iframe.dataset.lastUrl === url) return;
+
+      iframe.srcdoc = "<p style='font-family:sans-serif;'>Loading...</p>";
 
       try {
         const response = await fetch(proxyUrl);
-        const html = await response.text();
+        if (!response.ok) throw new Error("Network error");
 
-        const iframe = document.getElementById('browserFrame');
+        const html = await response.text();
         iframe.srcdoc = html;
+        iframe.dataset.lastUrl = url;
       } catch (err) {
-        alert("Error fetching URL");
         console.error(err);
+        iframe.srcdoc = "<p style='color:red;font-family:sans-serif;'>❌ Error loading page. Try another URL.</p>";
       }
     }
   </script>
