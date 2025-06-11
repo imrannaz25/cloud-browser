@@ -19,26 +19,21 @@
   <h1>Cloud Browser</h1>
   <input type="text" id="urlInput" placeholder="https://example.com" style="width: 60%;" />
   <button onclick="loadPage()">Go</button>
-  <iframe id="browserFrame" data-last-url=""></iframe>
+  <iframe id="browserFrame"></iframe>
 
   <script>
     async function loadPage() {
       const url = document.getElementById('urlInput').value;
       const proxyUrl = `https://6e239f40-794d-4995-8eb4-a601bd429c35-00-38s32i6l1k7i8.kirk.replit.dev/proxy?url=${encodeURIComponent(url)}`;
-      const iframe = document.getElementById('browserFrame');
-
-      if (iframe.dataset.lastUrl === url) return; // Skip reload if same URL
-
-      iframe.srcdoc = "<p>Loading...</p>"; // Show loading immediately
 
       try {
         const response = await fetch(proxyUrl);
         const html = await response.text();
 
+        const iframe = document.getElementById('browserFrame');
         iframe.srcdoc = html;
-        iframe.dataset.lastUrl = url;
       } catch (err) {
-        iframe.srcdoc = "<p style='color:red;'>Error loading page.</p>";
+        alert("Error fetching URL");
         console.error(err);
       }
     }
